@@ -1,11 +1,17 @@
-SERVER = 'http://emt.em-engin.ru/api/'
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SERVER = os.getenv('SERVER')
 
 AUTH_JSON = {
-                "login": "admin_gup_pat_spb",
-                "password": "B@T5z&8?"
+                "login": os.getenv('LOGIN'),
+                "password": os.getenv('PASSWORD')
              }
 
-JWT_STORE = '.tmp'
+JWT_STORE = os.getenv('JWT_STORE')
+
 
 VEHICLE_LIST = 'vehicles.txt'
 DIAG_RESULT = 'diag.txt'
