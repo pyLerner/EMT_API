@@ -1,6 +1,6 @@
 import json
 import os.path
-import emt_config as em
+import emt_config as cfg
 import requests
 import pprint
 
@@ -12,13 +12,13 @@ def login():
     Возвращает Jason Web Token (JWT)
     :return: JWT
     """
-    server = em.SERVER + 'auth/auth/authenticate'
-    payload = json.dumps(em.AUTH_JSON)
+    server = cfg.SERVER + 'auth/auth/authenticate'
+    payload = json.dumps(cfg.AUTH_JSON)
     headers = {"Content-Type": "application/json"}
     response = requests.request("POST", server, headers=headers, data=payload).json()
     # print(response)
     jwt = response["JsonWebToken"]["Value"]
-    with open(em.JWT_STORE, 'w') as jwt_file:
+    with open(cfg.JWT_STORE, 'w') as jwt_file:
         jwt_file.write(jwt)
     return jwt
 
@@ -28,14 +28,14 @@ def get_refresh_token():
     Возвращает значение ключа RefreshToken
     :return:
     """
-    server = em.SERVER + 'auth/auth/authenticate'
-    auth = em.AUTH_JSON
+    server = cfg.SERVER + 'auth/auth/authenticate'
+    auth = cfg.AUTH_JSON
     request = requests.post(server, json=auth).json()
     return request['RefreshToken']
 
 
 def refresh_token():
-    server = em.SERVER + 'auth/auth/rotateRefreshToken'
+    server = cfg.SERVER + 'auth/auth/rotateRefreshToken'
     token = get_refresh_token()
     payload = json.dumps({"RefreshToken": token})
     headers = {'refreshToken': token,
@@ -47,16 +47,16 @@ def refresh_token():
 
 def diag():
     # server = em.SERVER + 'core/Vehicle/realtime'
-    server = em.SERVER + 'diagnostics/diagnostics/search/by_garage_numbers'
-    if os.path.exists(em.VEHICLE_LIST):
-        vehicle_list = open(em.VEHICLE_LIST, 'r').read().split()
+    server = cfg.SERVER + 'diagnostics/diagnostics/search/by_garage_numbers'
+    if os.path.exists(cfg.VEHICLE_LIST):
+        vehicle_list = open(cfg.VEHICLE_LIST, 'r').read().split()
     else:
         # vehicle_list = []
         print('Список ТС отсутствует.')
         return -1
     payload = json.dumps(vehicle_list)
     # print(payload)
-    jwt = open(em.JWT_STORE)
+    jwt = open(cfg.JWT_STORE)
     jwt = jwt.read()
     headers = {'Authorization': f'Bearer {jwt}', 'Content-Type': 'application/json'}
     response = requests.request("POST", server, headers=headers, data=payload).json()
@@ -68,7 +68,7 @@ def diag():
 
 
 def coordinates_last_multiple(vehicle_list):
-    server = em.SERVER + 'discreteServiceRead/Coordinates/last/multiple/by_garage_nums'
+    server = cfg.SERVER + 'discreteServiceRead/Coordinates/last/multiple/by_garage_nums'
     # if os.path.exists(em.VEHICLE_LIST):
     #     vehicle_list = open(em.VEHICLE_LIST, 'r').read().split()
     # else:
@@ -77,7 +77,7 @@ def coordinates_last_multiple(vehicle_list):
     #     return -1
     payload = json.dumps(vehicle_list)
     # print(payload)
-    jwt = open(em.JWT_STORE)
+    jwt = open(cfg.JWT_STORE)
     jwt = jwt.read()
     headers = {'Authorization': f'Bearer {jwt}', 'Content-Type': 'application/json'}
     response = requests.request("POST", server, headers=headers, data=payload).json()
@@ -87,7 +87,7 @@ def coordinates_last_multiple(vehicle_list):
 
 if __name__ == "__main__":
     pass
-    # jwt = login()
+    jwt = login()
     # print(jwt)
     # diag()
     # coordinates_last_multiple(['d912e320-17ed-4021-af6d-6e47044ac186'])
