@@ -39,7 +39,7 @@ with open(file_name, 'a') as file:
                 text = '\nТС: {}, категории устройств: {}\n'.format(vehicle['VehicleName'], vehicle['Errors'])
 
             print(text)
-            file.write(text )
+            file.write(text)
 
             for error in vehicle['ErrorsDescription']:
                 text = f'{error}\n'
